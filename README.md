@@ -76,7 +76,7 @@ pip install -r requirements.txt
 ## 🚀 실행 방법
 
 ```bash
-python scanner.py https://example.com
+python scanner.py
 ```
 
 ---
