@@ -1,11 +1,11 @@
 {
   "nginx": {
     "headers": ["Server"],
-    "body_patterns": []
+    "body_patterns": ["nginx"]
   },
   "apache": {
     "headers": ["Server"],
-    "body_patterns": []
+    "body_patterns": ["Apache"]
   },
   "cloudflare": {
     "headers": ["CF-RAY", "CF-Cache-Status"],
@@ -17,6 +17,14 @@
   },
   "react": {
     "headers": [],
-    "body_patterns": ["react-root", "data-reactroot"]
+    "body_patterns": ["react", "data-reactroot"]
+  },
+  "django": {
+    "headers": ["Set-Cookie"],
+    "body_patterns": ["csrfmiddlewaretoken"]
+  },
+  "spring": {
+    "headers": [],
+    "body_patterns": ["Whitelabel Error Page"]
   }
 }
