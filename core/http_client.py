@@ -1,4 +1,7 @@
 import requests
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def fetch_http_info(url, perf=None):
     timeout = perf.get("http_timeout", 5.0) if perf else 5.0
@@ -13,7 +16,7 @@ def fetch_http_info(url, perf=None):
         return {
             "enabled": True,
             "status": r.status_code,
-            "headers": dict(r.headers),
+            "headers": r.headers,  # requests' CaseInsensitiveDict — keep case-insensitive lookups working
             "body": r.text[:5000]
         }
 

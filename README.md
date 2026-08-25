@@ -12,6 +12,8 @@
 > ❗ 이 도구는 **익스플로잇·공격 기능을 포함하지 않습니다.**  
 > ❗ 정보 수집과 변화 분석, 보고서 생성을 목적으로 설계되었습니다.
 
+📖 실행 방법을 바로 따라 하려면 [USAGE.md](USAGE.md) 참고.
+
 ---
 
 ## 🎯 주요 목적
@@ -75,9 +77,18 @@ pip install -r requirements.txt
 
 ## 🚀 실행 방법
 
+### 대화형 (기본)
 ```bash
 python scanner.py
 ```
+
+### 비대화형 / 자동화 (cron 등)
+```bash
+python scanner.py https://target.example --options 1,2,4 --scans FULL
+```
+- `--options`, `--scans`는 메뉴와 동일한 번호 형식(`1,2,3` 또는 `FULL`)
+- URL을 인자로 주면 두 옵션 모두 필수
+- 성능 값 오버라이드: `--dns-timeout`, `--port-timeout`, `--http-timeout`, `--concurrency`
 
 ---
 
@@ -91,16 +102,15 @@ WebScanner는 **실행 시 사용자에게 선택지를 제시**합니다.
 [ OPTIONS ]
 1. Scan history diff
 2. Save scan snapshot
-3. Record metadata
-4. Configure scan performance
-5. Long-term trend analysis
-6. AI risk explanation
-7. FULL OPTIONS
+3. Configure scan performance
+4. Long-term trend analysis
+5. AI risk explanation
+6. FULL OPTIONS
 ```
 
 #### ✔ 다중 선택 가능
 ```text
-예시: 1,2,5
+예시: 1,2,4
 ```
 
 #### ✔ FULL OPTIONS 선택 시
@@ -135,7 +145,7 @@ WebScanner는 **실행 시 사용자에게 선택지를 제시**합니다.
 
 ## ⚡ 성능 설정 (선택)
 
-옵션 4번 선택 시:
+옵션 3번 선택 시 (대화형 모드에서만 프롬프트 표시):
 
 ```text
 dns_timeout [1.0]
@@ -146,6 +156,7 @@ concurrency [50]
 
 - Enter 입력 시 기본값 유지
 - 네트워크 환경에 따라 조정 가능
+- 비대화형(CLI) 모드에서는 `--dns-timeout`, `--port-timeout`, `--http-timeout`, `--concurrency` 인자로 오버라이드
 
 ---
 

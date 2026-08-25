@@ -1,4 +1,8 @@
 def generate_trend_markdown(trend):
+    if "risk_assessment" not in trend:
+        note = trend.get("note", "insufficient history")
+        return f"# 📈 Long-Term Scan Trend Report\n\n{note} (need at least 2 saved scans).\n"
+
     r = trend["risk_assessment"]
     s = trend["summary"]
 

@@ -2,6 +2,7 @@ import asyncio
 import dns.asyncresolver
 from urllib.parse import urlparse
 from core.stats import record_success, record_timeout, record_error
+from core.utils import resource_path
 
 async def _resolve(resolver, fqdn, timeout, stats):
     try:
@@ -19,7 +20,7 @@ async def enumerate_subdomains_async(url, perf, stats):
     resolver = dns.asyncresolver.Resolver()
     resolver.lifetime = perf["dns_timeout"]
 
-    with open("data/subdomains.txt") as f:
+    with open(resource_path("data", "subdomains.txt")) as f:
         words = [w.strip() for w in f if w.strip()]
 
     sem = asyncio.Semaphore(int(perf["concurrency"]))

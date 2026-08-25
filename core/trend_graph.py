@@ -1,6 +1,6 @@
-import matplotlib.pyplot as plt
-
 def plot_trend(dates, values, title, ylabel, filename):
+    import matplotlib.pyplot as plt  # heavy import; deferred so runs that skip trend graphs stay fast
+
     plt.figure()
     plt.plot(dates, values, marker="o")
     plt.title(title)

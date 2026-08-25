@@ -1,14 +1,11 @@
 import json, os
-from datetime import datetime
-
-HISTORY_DIR = "history"
+from core.history import HISTORY_DIR, list_history_files
 
 def load_history():
-    scans = []
-    for f in sorted(os.listdir(HISTORY_DIR)):
-        if f.endswith(".json"):
-            scans.append(json.load(open(os.path.join(HISTORY_DIR,f))))
-    return scans
+    return [
+        json.load(open(os.path.join(HISTORY_DIR, f)))
+        for f in list_history_files()
+    ]
 
 def stability_risk(score):
     if score >= 0.85: return ("LOW","🟢")

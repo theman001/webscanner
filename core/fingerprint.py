@@ -1,8 +1,9 @@
 import json
 import re
-import os
 
-FP_PATH = os.path.join("data", "fingerprints.json")
+from core.utils import resource_path
+
+FP_PATH = resource_path("data", "fingerprints.json")
 
 with open(FP_PATH, "r", encoding="utf-8") as f:
     FINGERPRINTS = json.load(f)

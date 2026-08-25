@@ -3,11 +3,13 @@ import socket
 from urllib.parse import urlparse
 
 def scan_tls(url):
-    host = urlparse(url).hostname
+    parsed = urlparse(url)
+    host = parsed.hostname
+    port = parsed.port or 443
 
     try:
         ctx = ssl.create_default_context()
-        with socket.create_connection((host, 443), timeout=3) as sock:
+        with socket.create_connection((host, port), timeout=3) as sock:
             with ctx.wrap_socket(sock, server_hostname=host) as ssock:
                 cert = ssock.getpeercert()
                 return {
@@ -20,13 +22,13 @@ def scan_tls(url):
     except (TimeoutError, socket.timeout):
         return {
             "enabled": False,
-            "error": "TLS connection timed out (443 not reachable)"
+            "error": f"TLS connection timed out ({port} not reachable)"
         }
 
     except ConnectionRefusedError:
         return {
             "enabled": False,
-            "error": "TLS connection refused (443 closed)"
+            "error": f"TLS connection refused ({port} closed)"
         }
 
     except ssl.SSLError as e:
