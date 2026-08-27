@@ -17,8 +17,10 @@ def detect_framework(http):
         score = 0
         evidence = []
 
-        for h in rules.get("headers", []):
-            if h in headers:
+        for h, pattern in rules.get("headers", {}).items():
+            if h not in headers:
+                continue
+            if pattern is None or re.search(pattern, headers[h], re.I):
                 score += 1
                 evidence.append(f"header:{h}")
 

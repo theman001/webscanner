@@ -1,10 +1,11 @@
 import json, os
-from core.history import HISTORY_DIR, list_history_files
+from core.history import history_dir_for, list_history_files
 
-def load_history():
+def load_history(target):
+    d = history_dir_for(target)
     return [
-        json.load(open(os.path.join(HISTORY_DIR, f)))
-        for f in list_history_files()
+        json.load(open(os.path.join(d, f)))
+        for f in list_history_files(target)
     ]
 
 def stability_risk(score):
@@ -13,8 +14,8 @@ def stability_risk(score):
     if score >= 0.50: return ("HIGH","🟠")
     return ("CRITICAL","🔴")
 
-def analyze_trends():
-    scans = load_history()
+def analyze_trends(target):
+    scans = load_history(target)
     if len(scans) < 2:
         return {"note":"insufficient history"}
 

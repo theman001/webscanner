@@ -162,17 +162,20 @@ concurrency [50]
 
 ## 📦 결과물 설명
 
-### 📄 report/result.json
+결과는 `report/<대상 호스트>/v<번호>/`에 스캔할 때마다 새 버전 폴더로 쌓입니다 (같은 대상을 다시 스캔해도 이전 결과를 덮어쓰지 않음).
+예: `report/example.com/v1/`, `report/example.com/v2/`, ...
+
+### 📄 result.json
 - 스캔 결과 전체
 - 메타데이터 포함
 - diff / trend / ai 설명 포함
 
-### 📄 report/diff_summary.md
-- 이전 스캔 대비 변경 요약
+### 📄 diff_summary.md
+- 이전 스캔 대비 변경 요약 (OPTIONS `1`)
 - Markdown / Notion 호환
 
-### 📄 report/trend_report.md
-- 장기 변화 분석 리포트
+### 📄 trend_report.md
+- 장기 변화 분석 리포트 (OPTIONS `4`)
 - 안정성 점수 및 위험 등급 포함
 
 ### 📊 그래프

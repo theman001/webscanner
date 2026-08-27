@@ -12,7 +12,7 @@ from core.utils import (
     parse_choices,
     configure_performance,
     init_logger,
-    resource_path
+    report_dir_for
 )
 
 from core.http_client import fetch_http_info
@@ -160,6 +160,7 @@ def main():
         scans = select_scans()
 
     logger.info(f"target={target} options={sorted(options)} scans={sorted(scans)}")
+    report_dir = report_dir_for(target)
 
     # 2️⃣ 성능 설정 (옵션 3 선택 시 대화형 프롬프트, CLI 인자가 최종 오버라이드)
     want_perf_prompt = (not args.url) and ("FULL" in options or "3" in options)
@@ -251,13 +252,11 @@ def main():
     # OPTIONS
     # =========================
 
-    os.makedirs(resource_path("report"), exist_ok=True)
-
     # diff — 이번 스캔을 history에 저장하기 *전에* 계산해야
     # 기존에 저장된 가장 최근 스냅샷과 비교된다 (자기 자신과 비교되는 것 방지)
     if "FULL" in options or "1" in options:
         logger.info("option: diff against last scan")
-        diff = diff_last_scan(output)
+        diff = diff_last_scan(target, output)
         if diff:
             summary = summarize_diff(diff)
             md = format_diff_markdown(summary)
@@ -267,7 +266,7 @@ def main():
                 "markdown": md,
                 "raw": json.loads(diff.to_json())  # DeepDiff can hold raw `type` objects (type_changes); to_json() makes it JSON-safe
             }
-            with open(resource_path("report", "diff_summary.md"), "w", encoding="utf-8") as f:
+            with open(os.path.join(report_dir, "diff_summary.md"), "w", encoding="utf-8") as f:
                 f.write(md)
         else:
             output["diff"] = {
@@ -280,31 +279,31 @@ def main():
     # 스캔 이력 저장
     if "FULL" in options or "2" in options:
         logger.info("option: save snapshot")
-        save_snapshot(output)
+        save_snapshot(target, output)
 
     # 장기 트렌드 분석
     if "FULL" in options or "4" in options:
         logger.info("option: trend analysis")
-        trend = analyze_trends()
+        trend = analyze_trends(target)
         output["trend"] = trend
 
-        with open(resource_path("report", "trend_report.md"), "w", encoding="utf-8") as f:
+        with open(os.path.join(report_dir, "trend_report.md"), "w", encoding="utf-8") as f:
             f.write(generate_trend_markdown(trend))
 
-        scans_history = load_history()
+        scans_history = load_history(target)
         if scans_history:
             dates, ports, subs = extract_timeseries(scans_history)
             plot_trend(
                 dates, ports,
                 "Open Ports Over Time",
                 "Number of Open Ports",
-                resource_path("report", "ports_trend.png")
+                os.path.join(report_dir, "ports_trend.png")
             )
             plot_trend(
                 dates, subs,
                 "Subdomains Over Time",
                 "Number of Subdomains",
-                resource_path("report", "subdomains_trend.png")
+                os.path.join(report_dir, "subdomains_trend.png")
             )
 
     # AI 위험 설명 (STUB)
@@ -318,10 +317,11 @@ def main():
     # OUTPUT
     # =========================
 
-    with open(resource_path("report", "result.json"), "w", encoding="utf-8") as f:
+    result_path = os.path.join(report_dir, "result.json")
+    with open(result_path, "w", encoding="utf-8") as f:
         json.dump(output, f, indent=2, ensure_ascii=False)
 
-    logger.info(f"done in {timings['total']}s -> report/result.json")
+    logger.info(f"done in {timings['total']}s -> {result_path}")
     print("\n[+] Scan completed successfully")
 
 

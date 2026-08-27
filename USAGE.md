@@ -92,13 +92,23 @@ cron 등록 예시 (매일 03:00):
 
 실행이 끝나면 `report/`, `history/`에 파일이 쌓입니다 (스크립트 실행 위치와 무관하게 항상 프로젝트 루트 기준).
 
+`report/`는 **대상 호스트별 → 버전별**로 나뉩니다. 스캔할 때마다 새 `v<N>` 폴더가 생기고 이전 결과는 그대로 남습니다:
+```text
+report/
+└── example.com/
+    ├── v1/  result.json, diff_summary.md, trend_report.md, ...
+    └── v2/  result.json, diff_summary.md, trend_report.md, ...
+```
+
 | 경로 | 내용 |
 |------|------|
-| `report/result.json` | 이번 스캔의 전체 결과 (metadata, timing, 스캔별 결과, diff/trend/ai) |
-| `report/diff_summary.md` | 이전 스캔과의 변경점 (OPTIONS `1` 선택 시) |
-| `report/trend_report.md` | 안정성 점수·위험 등급 (OPTIONS `4` 선택 시, 스냅샷 2개 이상 필요) |
-| `report/ports_trend.png`, `report/subdomains_trend.png` | 시간에 따른 포트/서브도메인 개수 그래프 |
-| `history/scan_*.json` | OPTIONS `2` 선택 시 저장되는 스냅샷 (diff/trend의 원본 데이터) |
+| `report/<host>/v<N>/result.json` | 해당 회차 스캔의 전체 결과 (metadata, timing, 스캔별 결과, diff/trend/ai) |
+| `report/<host>/v<N>/diff_summary.md` | 이전 스캔과의 변경점 (OPTIONS `1` 선택 시) |
+| `report/<host>/v<N>/trend_report.md` | 안정성 점수·위험 등급 (OPTIONS `4` 선택 시, 스냅샷 2개 이상 필요) |
+| `report/<host>/v<N>/ports_trend.png`, `subdomains_trend.png` | 시간에 따른 포트/서브도메인 개수 그래프 |
+| `history/<host>/scan_*.json` | OPTIONS `2` 선택 시 저장되는 스냅샷 (diff/trend의 원본 데이터, 대상 호스트별로 격리) |
+
+`history/`도 `report/`처럼 대상 호스트별 폴더로 나뉩니다. 서로 다른 대상을 번갈아 스캔해도 diff/trend는 항상 같은 호스트의 이전 스냅샷하고만 비교됩니다.
 
 위험 등급 기준(`stability_score`):
 

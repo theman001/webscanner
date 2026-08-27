@@ -7,6 +7,19 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def resource_path(*parts):
     return os.path.join(BASE_DIR, *parts)
 
+def target_host(url):
+    return urlparse(url).hostname or "unknown-target"
+
+def report_dir_for(target):
+    """report/<host>/v<N> — a fresh, numbered folder per scan of a target."""
+    base = resource_path("report", target_host(target))
+    os.makedirs(base, exist_ok=True)
+    versions = [int(d[1:]) for d in os.listdir(base) if d[1:].isdigit() and d[0] == "v"]
+    next_version = max(versions, default=0) + 1
+    path = os.path.join(base, f"v{next_version}")
+    os.makedirs(path)
+    return path
+
 def validate_url(url):
     p = urlparse(url)
     if p.scheme not in ("http","https"):
